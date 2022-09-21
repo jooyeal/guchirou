@@ -20,15 +20,18 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const postsData = ref(db, "posts/");
-    console.log(postsData);
-    // onValue(postsData, (snapshot) => {
-    //   const data = snapshot.val();
-    //   const original = Object.keys(data).map((key) => ({
-    //     id: key,
-    //     content: data[key]["content"],
-    //   }));
-    //   setPosts(original.reverse());
-    // });
+    onValue(postsData, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const original = Object.keys(data).map((key) => ({
+          id: key,
+          content: data[key]["content"],
+        }));
+        setPosts(original.reverse());
+      } else {
+        console.log("no data");
+      }
+    });
   }, []);
 
   const onScroll = (e: any) => {
