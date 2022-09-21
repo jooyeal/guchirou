@@ -12,28 +12,28 @@ type Post = {
   id: string;
   content: string;
 };
-type Props = {
-  posts: any;
-};
-const Home: React.FC<Props> = ({ posts }) => {
+const Home: NextPage = () => {
+  const [posts, setPosts] = useState<any>([]);
   const postsRef = useRef<HTMLDivElement>(null);
   const [showNew, setShowNew] = useState<boolean>(false);
   const [updated, setUpdated] = useState<boolean>(false);
 
-  const postsData = ref(db, "posts/");
-  // onValue(postsData, (snapshot) => {
-  //   if (snapshot.exists()) {
-  //     const data = snapshot.val();
-  //     const original = Object.keys(data).map((key) => ({
-  //       id: key,
-  //       content: data[key]["content"],
-  //     }));
-  //     // setPosts(original.reverse());
-  //   } else {
-  //     console.log(snapshot);
-  //     console.log("no data");
-  //   }
-  // });
+  useEffect(() => {
+    const postsData = ref(db, "posts/");
+    onValue(postsData, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const original = Object.keys(data).map((key) => ({
+          id: key,
+          content: data[key]["content"],
+        }));
+        setPosts(original.reverse());
+      } else {
+        console.log(snapshot);
+        console.log("no data");
+      }
+    });
+  }, [posts]);
 
   const onScroll = (e: any) => {
     if (e.target.scrollTop !== 0) setShowNew(true);
@@ -78,26 +78,3 @@ const Home: React.FC<Props> = ({ posts }) => {
 };
 
 export default Home;
-
-export function getServerSideProps() {
-  let posts: any = [];
-  const postsData = ref(db, "posts/");
-  onValue(postsData, (snapshot) => {
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      const original = Object.keys(data).map((key) => ({
-        id: key,
-        content: data[key]["content"],
-      }));
-      posts = original.reverse();
-    } else {
-      console.log(snapshot);
-      console.log("no data");
-    }
-  });
-  return {
-    props: {
-      posts,
-    },
-  };
-}
