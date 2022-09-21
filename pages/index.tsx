@@ -7,32 +7,33 @@ import Header from "../components/Header";
 import { useEffect, useRef, useState } from "react";
 import { db } from "../service/firebase";
 import { ref, onValue } from "firebase/database";
-
+import "firebase/auth";
 type Post = {
   id: string;
   content: string;
 };
-const Home: NextPage = () => {
-  const [posts, setPosts] = useState<any>([]);
+type Props = {
+  posts: any;
+};
+const Home: React.FC<Props> = ({ posts }) => {
   const postsRef = useRef<HTMLDivElement>(null);
   const [showNew, setShowNew] = useState<boolean>(false);
   const [updated, setUpdated] = useState<boolean>(false);
 
-  useEffect(() => {
-    const postsData = ref(db, "posts/");
-    onValue(postsData, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        const original = Object.keys(data).map((key) => ({
-          id: key,
-          content: data[key]["content"],
-        }));
-        setPosts(original.reverse());
-      } else {
-        console.log("no data");
-      }
-    });
-  }, []);
+  const postsData = ref(db, "posts/");
+  // onValue(postsData, (snapshot) => {
+  //   if (snapshot.exists()) {
+  //     const data = snapshot.val();
+  //     const original = Object.keys(data).map((key) => ({
+  //       id: key,
+  //       content: data[key]["content"],
+  //     }));
+  //     // setPosts(original.reverse());
+  //   } else {
+  //     console.log(snapshot);
+  //     console.log("no data");
+  //   }
+  // });
 
   const onScroll = (e: any) => {
     if (e.target.scrollTop !== 0) setShowNew(true);
@@ -77,3 +78,26 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export function getServerSideProps() {
+  let posts: any = [];
+  const postsData = ref(db, "posts/");
+  onValue(postsData, (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      const original = Object.keys(data).map((key) => ({
+        id: key,
+        content: data[key]["content"],
+      }));
+      posts = original.reverse();
+    } else {
+      console.log(snapshot);
+      console.log("no data");
+    }
+  });
+  return {
+    props: {
+      posts,
+    },
+  };
+}
