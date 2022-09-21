@@ -16,7 +16,6 @@ const Home: NextPage = () => {
   const [posts, setPosts] = useState<any>([]);
   const postsRef = useRef<HTMLDivElement>(null);
   const [showNew, setShowNew] = useState<boolean>(false);
-  const [updated, setUpdated] = useState<boolean>(false);
 
   useEffect(() => {
     const postsData = ref(db, "posts/");
@@ -33,7 +32,7 @@ const Home: NextPage = () => {
         console.log("no data");
       }
     });
-  }, [posts]);
+  }, []);
 
   const onScroll = (e: any) => {
     if (e.target.scrollTop !== 0) setShowNew(true);
