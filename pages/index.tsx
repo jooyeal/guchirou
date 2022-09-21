@@ -20,14 +20,15 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const postsData = ref(db, "posts/");
-    onValue(postsData, (snapshot) => {
-      const data = snapshot.val();
-      const original = Object.keys(data).map((key) => ({
-        id: key,
-        content: data[key]["content"],
-      }));
-      setPosts(original.reverse());
-    });
+    console.log(postsData);
+    // onValue(postsData, (snapshot) => {
+    //   const data = snapshot.val();
+    //   const original = Object.keys(data).map((key) => ({
+    //     id: key,
+    //     content: data[key]["content"],
+    //   }));
+    //   setPosts(original.reverse());
+    // });
   }, []);
 
   const onScroll = (e: any) => {
